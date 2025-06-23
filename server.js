@@ -9,9 +9,10 @@ import { userRoutes } from './api/user/user.routes.js'
 import { reviewRoutes } from './api/review/review.routes.js'
 import { stayRoutes } from './api/stay/stay.routes.js'
 import { setupSocketAPI } from './services/socket.service.js'
-
+import dotenv from 'dotenv'
 import { setupAsyncLocalStorage } from './middlewares/setupAls.middleware.js'
-
+dotenv.config()
+const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY
 const app = express()
 const server = http.createServer(app)
 
@@ -27,7 +28,9 @@ if (process.env.NODE_ENV === 'production') {
       'http://127.0.0.1:3000',
       'http://localhost:3000',
       'http://127.0.0.1:5173',
+      'http://127.0.0.1:5174',
       'http://localhost:5173',
+      'http://localhost:5174',
     ],
     credentials: true,
   }
@@ -42,6 +45,10 @@ app.use('/api/review', reviewRoutes)
 app.use('/api/stay', stayRoutes)
 app.use('/api/order', orderRoutes)
 setupSocketAPI(server)
+
+app.get('/api/config/google-maps-key', (req, res) => {
+  res.send({ apiKey: googleMapsKey })
+})
 
 app.get('/secret', (req, res) => {
   if (process.env.SECRET_STR) {
