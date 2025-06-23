@@ -3,14 +3,8 @@ import { stayService } from './stay.service.js'
 
 export async function getStays(req, res) {
   const filterBy = {
-    name: req.query.name || '',
-    country: req.query.country || '',
-    city: req.query.city || '',
-    price: +req.query.price || 0,
+    txt: req.query.txt || '',
     capacity: +req.query.capacity || 0,
-    sortField: req.query.sortField || '',
-    sortDir: +req.query.sortDir || 1,
-    pageIdx: req.query.pageIdx != null ? +req.query.pageIdx : undefined,
     limit: req.query.limit != null ? +req.query.limit : undefined,
   }
 

@@ -134,26 +134,14 @@ async function removeStayMsg(stayId, msgId) {
 function _buildCriteria(filterBy) {
   const criteria = {}
 
-  if (filterBy.name) {
+  if (filterBy.txt) {
     criteria.name = { $regex: filterBy.name, $options: 'i' }
+    criteria['loc.city'] = { $regex: filterBy.name, $options: 'i' }
+    criteria['loc.country'] = { $regex: filterBy.name, $options: 'i' }
   }
-
-  //  country / city
-  if (filterBy.country) {
-    criteria['loc.country'] = filterBy.country
-  }
-  if (filterBy.city) {
-    criteria['loc.city'] = filterBy.city
-  }
-
-  // price
-  if (filterBy.price) {
-    criteria.price = { $gte: filterBy.price }
-  }
-
   // capacity
   if (filterBy.capacity) {
-    criteria.capacity = { $gte: filterBy.capacity }
+    criteria.capacity = { $lte: filterBy.capacity }
   }
 
   return criteria
