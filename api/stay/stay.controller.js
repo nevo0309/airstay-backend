@@ -4,6 +4,8 @@ import { stayService } from './stay.service.js'
 export async function getStays(req, res) {
   const filterBy = {
     txt: req.query.txt || '',
+    country: req.query.country || '',
+    city: req.query.city || '',
     capacity: +req.query.capacity || 0,
     limit: req.query.limit != null ? +req.query.limit : undefined,
   }
@@ -16,6 +18,24 @@ export async function getStays(req, res) {
     res.status(400).send({ err: 'Failed to get stays' })
   }
 }
+// export async function getStays(req, res) {
+//   const filterBy = {
+//     text: req.query.text?.trim() || '',
+//     country: req.query.country || '',
+//     city: req.query.city || '',
+//     capacity: req.query.capacity ? +req.query.capacity : undefined,
+//     price: req.query.price ? +req.query.price : undefined,
+//     limit: req.query.limit ? +req.query.limit : undefined,
+//   }
+
+//   try {
+//     const stays = await stayService.query(filterBy)
+//     res.json(stays)
+//   } catch (err) {
+//     logger.error('Failed to get stays', err)
+//     res.status(400).send({ err: 'Failed to get stays' })
+//   }
+// }
 
 export async function getStayById(req, res) {
   try {

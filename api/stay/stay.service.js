@@ -134,18 +134,49 @@ async function removeStayMsg(stayId, msgId) {
 function _buildCriteria(filterBy) {
   const criteria = {}
 
-  if (filterBy.txt) {
+  if (filterBy.name) {
     criteria.name = { $regex: filterBy.name, $options: 'i' }
-    criteria['loc.city'] = { $regex: filterBy.name, $options: 'i' }
-    criteria['loc.country'] = { $regex: filterBy.name, $options: 'i' }
   }
+
+  //  country / city
+  if (filterBy.country) {
+    criteria['loc.country'] = filterBy.country
+  }
+  if (filterBy.city) {
+    criteria['loc.city'] = filterBy.city
+  }
+
+  // price
+  if (filterBy.price) {
+    criteria.price = { $gte: filterBy.price }
+  }
+
   // capacity
   if (filterBy.capacity) {
-    criteria.capacity = { $lte: filterBy.capacity }
+    criteria.capacity = { $gte: filterBy.capacity }
   }
 
   return criteria
 }
+// function _buildCriteria(filterBy = {}) {
+//   const criteria = {}
+
+//   if (filterBy.text) {
+//     const rx = makeLiteralSearchRegex(filterBy.text)
+
+//     criteria.$or = [{ name: rx }, { 'loc.city': rx }, { 'loc.country': rx }]
+//   }
+// if (filterBy.country) criteria['loc.country'] = filterBy.country;
+// if (filterBy.city)    criteria['loc.city']    = filterBy.city;
+//   if (filterBy.capacity) criteria.capacity = { $lte: +filterBy.capacity }
+
+//   return criteria
+// }
+
+// function makeLiteralSearchRegex(text) {
+//   const escaped = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+//   return { $regex: escaped, $options: 'i' };
+// }
 
 function _buildSort(filterBy) {
   if (!filterBy.sortField) return {}
