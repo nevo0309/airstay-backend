@@ -3,6 +3,7 @@ import path from 'path'
 import cors from 'cors'
 import express from 'express'
 import cookieParser from 'cookie-parser'
+import { Server } from 'socket.io'
 
 import { authRoutes } from './api/auth/auth.routes.js'
 import { userRoutes } from './api/user/user.routes.js'
@@ -16,7 +17,22 @@ const googleMapsKey = process.env.GOOGLE_MAPS_API_KEY
 const app = express()
 const server = http.createServer(app)
 
+const io = new Server(server, {
+  cors: {
+    origin: [
+      'http://127.0.0.1:3000',
+      'http://localhost:3000',
+      'http://127.0.0.1:5173',
+      'http://localhost:5173',
+      'http://127.0.0.1:5174',
+      'http://localhost:5174',
+    ],
+    credentials: true,
+  },
+})
+
 // Express App Config
+setupSocketAPI(io)
 app.use(cookieParser())
 app.use(express.json())
 
@@ -44,7 +60,6 @@ app.use('/api/user', userRoutes)
 app.use('/api/review', reviewRoutes)
 app.use('/api/stay', stayRoutes)
 app.use('/api/order', orderRoutes)
-setupSocketAPI(server)
 
 app.get('/api/config/google-maps-key', (req, res) => {
   res.send({ apiKey: googleMapsKey })
@@ -69,6 +84,7 @@ app.get('/*all', (req, res) => {
 
 import { logger } from './services/logger.service.js'
 import { orderRoutes } from './api/order/order.routes.js'
+
 const port = process.env.PORT || 3030
 
 server.listen(port, () => {
