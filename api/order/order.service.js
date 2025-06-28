@@ -37,6 +37,7 @@ export async function query(filterBy = {}) {
         $project: {
           status: 1,
           startDate: 1,
+          createdAt: 1,
           endDate: 1,
           totalPrice: 1,
           guests: 1,
@@ -65,7 +66,7 @@ export async function query(filterBy = {}) {
         },
       },
 
-      { $sort: { startDate: -1 } },
+      { $sort: { createdAt: -1 } },
     ])
     .toArray()
 }
