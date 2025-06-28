@@ -1,5 +1,7 @@
 import { orderService } from './order.service.js'
 import { logger } from '../../services/logger.service.js'
+import { emitToUser, emitToUsers } from '../../services/socket.service.js'
+import { toPlainId } from '../../services/util.service.js'
 
 export async function getOrders(req, res) {
   try {
@@ -28,6 +30,10 @@ export async function addOrder(req, res) {
 
     const added = await orderService.add(order)
     res.json(added)
+
+    //   Notify host in real time
+    emitToUser(added.host._id, 'order-added', added)
+    console.log('[SOCKET] emitting order-added to', toPlainId(added.host._id))
   } catch (err) {
     logger.error('Failed to add order', err)
     res.status(400).send({ err: 'Failed to add order' })
@@ -66,8 +72,19 @@ export async function updateOrderStatus(req, res) {
   try {
     const { id } = req.params
     const { status } = req.body
-    const saved = await orderService.updateStatus(id, status)
-    res.json(saved)
+
+    await orderService.updateStatus(id, status) // update first
+    const full = await orderService.getById(id) // get host + guest ids
+
+    res.json({ orderId: id, status })
+
+    //  Notify both guest and host; the reducer can decide what to do
+    emitToUsers([full.host._id, full.guest._id], 'order-updated', {
+      orderId: id,
+      status,
+      hostId: toPlainId(full.host._id),
+      guestId: toPlainId(full.guest._id),
+    })
   } catch (err) {
     logger.error('Failed to update order status', err)
     res.status(400).send({ err: 'Failed to update order status' })
