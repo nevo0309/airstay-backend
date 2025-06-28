@@ -60,6 +60,28 @@ export async function addStay(req, res) {
     res.status(400).send({ err: 'Failed to add stay' })
   }
 }
+export async function addStayToWishlist(req, res) {
+  const stayId = req.params.id
+  const userId = req.loggedinUser._id
+  try {
+    const isLiked = await stayService.toggleWishlist(stayId, userId)
+    res.json({ stayId, isLiked })
+  } catch (err) {
+    logger.error('Failed to toggle wishlist', err)
+    res.status(400).send({ err: 'Failed to update wishlist' })
+  }
+}
+
+export async function getStayWishlist(req, res) {
+  try {
+    const userId = req.loggedinUser._id
+    const stays = await stayService.getWishlistByUser(userId)
+    res.json(stays)
+  } catch (err) {
+    logger.error('Failed to fetch wishlist', err)
+    res.status(400).send({ err: 'Failed to fetch wishlist' })
+  }
+}
 
 export async function updateStay(req, res) {
   const { loggedinUser, body: stay } = req

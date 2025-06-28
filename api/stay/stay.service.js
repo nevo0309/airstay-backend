@@ -15,6 +15,7 @@ export const stayService = {
   update,
   addStayMsg,
   removeStayMsg,
+  getWishlistByUser,
 }
 
 async function query(filterBy = {}) {
@@ -85,6 +86,23 @@ async function add(stay) {
     logger.error('cannot insert stay', err)
     throw err
   }
+}
+export async function toggleWishlist(stayId, userId) {
+  const stayColl = await dbService.getCollection('stays')
+  const sId = ObjectId.createFromHexString(stayId)
+  const uId = ObjectId.createFromHexString(userId)
+
+  // do we already like it?
+  const isAlready = await stayColl.findOne({ _id: sId, likedByUsers: uId })
+
+  const op = isAlready ? { $pull: { likedByUsers: uId } } : { $addToSet: { likedByUsers: uId } }
+
+  await stayColl.updateOne({ _id: sId }, op)
+  return !isAlready
+}
+export async function getWishlistByUser(userId) {
+  const col = await dbService.getCollection('stays')
+  return col.find({ likedByUsers: ObjectId.createFromHexString(userId) }).toArray()
 }
 
 async function update(stay) {

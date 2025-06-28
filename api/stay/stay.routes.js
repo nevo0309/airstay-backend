@@ -11,6 +11,8 @@ import {
   removeStay,
   addStayMsg,
   removeStayMsg,
+  addStayToWishlist,
+  getStayWishlist,
 } from './stay.controller.js'
 
 const router = express.Router()
@@ -23,8 +25,8 @@ router.get('/:id', log, getStayById)
 router.post('/', log, requireAuth, addStay)
 router.put('/:id', requireAuth, updateStay)
 router.delete('/:id', requireAuth, removeStay)
-// router.delete('/:id', requireAuth, requireAdmin, removeStay)
-
+router.post('/:id/wishlist', requireAuth, addStayToWishlist)
+router.get('/wishlists', requireAuth, getStayWishlist)
 router.post('/:id/msg', requireAuth, addStayMsg)
 router.delete('/:id/msg/:msgId', requireAuth, removeStayMsg)
 
