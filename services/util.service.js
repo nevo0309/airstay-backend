@@ -104,3 +104,11 @@ export function randomPastTime() {
   const pastTime = getRandomIntInclusive(HOUR, WEEK)
   return Date.now() - pastTime
 }
+
+export function toPlainId(id) {
+  if (!id) return ''
+  if (typeof id === 'string') return id // already good
+  if (id.$oid) return id.$oid // came from Mongo → JSON
+  if (id.toString) return id.toString() // ObjectId instance
+  return String(id) // fallback
+}
