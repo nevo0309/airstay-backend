@@ -42,6 +42,7 @@ export async function query(filterBy = {}) {
           totalPrice: 1,
           guests: 1,
           orderedAt: 1,
+          message: 1,
 
           stay: {
             _id: '$stayDoc._id',
