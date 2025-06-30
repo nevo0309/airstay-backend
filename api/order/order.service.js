@@ -13,6 +13,7 @@ export const orderService = {
   update,
   remove,
   updateStatus,
+  setHostMsgRead,
 }
 
 export async function query(filterBy = {}) {
@@ -43,6 +44,7 @@ export async function query(filterBy = {}) {
           guests: 1,
           orderedAt: 1,
           message: 1,
+          isHostMsgRead: 1,
 
           stay: {
             _id: '$stayDoc._id',
@@ -96,6 +98,7 @@ async function add(order) {
     if (order.guest?._id && typeof order.guest._id === 'string')
       order.guest._id = ObjectId.createFromHexString(order.guest._id)
     order.createdAt = Date.now()
+    order.isHostMsgRead = false
     const { insertedId } = await collection.insertOne(order)
     order._id = insertedId
     return order
@@ -146,6 +149,14 @@ async function updateStatus(orderId, status) {
     logger.error(`cannot update status on order ${orderId}`, err)
     throw err
   }
+}
+
+async function setHostMsgRead(orderId, val) {
+  const col = await dbService.getCollection('orders')
+  await col.updateOne(
+    { _id: ObjectId.createFromHexString(orderId) },
+    { $set: { isHostMsgRead: val } }
+  )
 }
 
 /* ----------------------------------------------------------------- */

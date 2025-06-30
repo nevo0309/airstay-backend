@@ -9,6 +9,7 @@ import {
   updateOrder,
   removeOrder,
   updateOrderStatus,
+  markHostMsgRead,
 } from './order.controller.js'
 
 const router = express.Router()
@@ -19,7 +20,7 @@ router.get('/:id', log, getOrderById)
 router.post('/', requireAuth, addOrder)
 router.put('/:id', requireAuth, updateOrder)
 router.delete('/:id', requireAuth, removeOrder)
-
+router.patch('/:id/msg-read', requireAuth, markHostMsgRead)
 // dedicate PATCH for status to keep it clean
 router.patch('/:id/status', requireAuth, updateOrderStatus)
 

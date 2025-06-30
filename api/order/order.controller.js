@@ -90,3 +90,14 @@ export async function updateOrderStatus(req, res) {
     res.status(400).send({ err: 'Failed to update order status' })
   }
 }
+
+export async function markHostMsgRead(req, res) {
+  try {
+    const { id: orderId } = req.params
+    await orderService.setHostMsgRead(orderId, true)
+    res.send({ ok: true })
+  } catch (err) {
+    logger.error('Failed to mark msg read', err)
+    res.status(400).send({ err: 'Cannot mark msg read' })
+  }
+}
