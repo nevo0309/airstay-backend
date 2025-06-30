@@ -16,6 +16,7 @@ export const stayService = {
   addStayMsg,
   removeStayMsg,
   getWishlistByUser,
+  toggleWishlist,
 }
 
 async function query(filterBy = {}) {
