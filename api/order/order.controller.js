@@ -32,7 +32,7 @@ export async function addOrder(req, res) {
     res.json(added)
 
     //   Notify host in real time
-    emitToUser(added.host._id, 'order-added', added)
+    emitToUsers([added.host._id, added.guest._id], 'order-added', added)
     console.log('[SOCKET] emitting order-added to', toPlainId(added.host._id))
   } catch (err) {
     logger.error('Failed to add order', err)
